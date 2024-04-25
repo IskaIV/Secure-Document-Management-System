@@ -13,7 +13,7 @@
             <div class="mid-border">
                 <div class="inner-border">
 
-                    <div class="logo"><img src="/static/Ask-A-Nole-Logo-Compact.png" /></div>
+                    <div class="logo"><img src="/static/logo.png" /></div>
                     <div class="search-bar">
                         <form method="POST" action="/search">
                             <input class="search-bar-txt" type="text" placeholder="Search..." name="searched">
@@ -42,7 +42,8 @@
                             <article class="post">
                                 <h2>{{ post[2] }}</a></h2>
                                 <h3>{{ post[3] }}</h3>
-                                <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button class="seemore-btn">See More</button> </a>
+                                <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button class="seemore-btn">See
+                                        More</button> </a>
                             </article>
                         </div>
                         {% endfor %}

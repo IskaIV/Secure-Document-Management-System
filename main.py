@@ -109,7 +109,7 @@ def main():
 
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Files ORDER BY Id DESC")
+    cur.execute("SELECT * FROM Files ORDER BY FileId DESC")
     posts = cur.fetchall()
 
     return render_template('MainPage.html', posts=posts)
@@ -127,7 +127,7 @@ def uploadfile():
 
 @app.route('/addfile', methods=['POST', 'GET'])
 def addfile():
-    session_token = request.cookies.get('auth_token')
+    session_token = request.cookies.get('AuthToken')
 
     if not check_token(session_token, user[0]):
         return render_template('TokenError.html')
