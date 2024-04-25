@@ -24,15 +24,16 @@ def login():
         Password = request.form['Password']
 
         hashed_password = hashlib.sha256(Password.encode()).hexdigest()
+        print(hashed_password)
+
         cur = con.cursor()
-        cur.execute("SELECT * FROM Users WHERE WorkID = ? AND Password = ?",
-                    (WorkID, hashed_password))
-        rows = cur.fetchall()
-        if len(rows) == 0:
+        if not cur.execute("SELECT * FROM Users WHERE WORKID = ?", (WorkID)).fetchall():
             return render_template("NoMatchingUser.html")
 
+        if not cur.execute("SELECT * FROM Users WHERE Password = ?", (hashed_password)).fetchall():
+            return render_template("Error.html")
+
         token = generate_token(WorkID)
-        user[0] = rows[0][0]
 
         response = make_response(redirect('/main'))
         response.set_cookie('AuthToken', token)
@@ -73,13 +74,11 @@ def signupvalid():
                 cur = con.cursor()
 
                 # Check WORKID is valid
-                if WorkID not in cur.execute("SELECT WORKID FROM ValidWorkID").fetchall():
-                    con.close()
+                if not cur.execute("SELECT * FROM ValidWorkID WHERE WORKID = ?", (WorkID,)).fetchall():
                     return render_template('InvalidWorkID.html')
 
                 # If if WorkID is already in the database, return an error
                 if WorkID in cur.execute("SELECT WORKID FROM Users").fetchall():
-                    con.close()
                     return render_template('UserExists.html')
 
                 # If password and confirm password are the same, insert the user into the database
@@ -145,15 +144,6 @@ if __name__ == "__main__":
     start_db()
 
     # Open workids.txt and insert the data into the database
-    if not os.path.exists('workids.txt'):
-        with open('workids.txt', 'r') as file:
-            lines = file.readlines()
-            with sqlite3.connect('database.db') as con:
-                cur = con.cursor()
-                for line in lines:
-                    cur.execute(
-                        "INSERT INTO ValidWorkID (WORKID) VALUES (?)", (line.strip(),))
-                con.commit()
 
     # Debug mode is enabled
     app.run(debug=True)
