@@ -1,4 +1,3 @@
-import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, make_response
 import hashlib
@@ -16,39 +15,43 @@ def front_page():
     return render_template('Login.html')
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
-    con = sqlite3.connect('database.db')
-    try:
-        WorkID = request.form['WorkID']
-        Password = request.form['Password']
+    if request.method == 'POST':
+        con = sqlite3.connect('database.db')
+        try:
+            WorkID = request.form['WorkID']
+            Password = request.form['Password']
 
-        hashed_password = hashlib.sha256(Password.encode()).hexdigest()
-        print(hashed_password)
+            hashed_password = hashlib.sha256(
+                Password.encode()).hexdigest()  # Correct hashing method
 
-        cur = con.cursor()
-        if not cur.execute("SELECT * FROM Users WHERE WORKID = ?", (WorkID)).fetchall():
-            return render_template("NoMatchingUser.html")
+            cur = con.cursor()
 
-        if not cur.execute("SELECT * FROM Users WHERE Password = ?", (hashed_password)).fetchall():
+            # Fetch the user with the provided WorkID
+            cur.execute("SELECT * FROM Users WHERE WORKID = ? AND Password = ?",
+                        (WorkID, hashed_password))
+            rows = cur.fetchall()
+            if len(rows) == 0:
+                return render_template("NoMatchingUser.html")
+
+            token = generate_token(WorkID)
+            user[0] = rows[0][0]
+
+            response = make_response(redirect('/main'))
+            response.set_cookie('AuthToken', token)
+
+            return response
+        except sqlite3.Error as e:
+            logging.error(f"Database Error: {e}")
             return render_template("Error.html")
-
-        token = generate_token(WorkID)
-
-        response = make_response(redirect('/main'))
-        response.set_cookie('AuthToken', token)
-
-        return response
-    except sqlite3.Error as e:
-        logging.error(f"Database Error: {e}")
-        return render_template("Error.html")
-    except Exception as e:
-        logging.error(f"Exception Error: {e}")
-        return render_template("Error.html")
-    except:
-        return render_template("/")
-    finally:
-        con.close()
+        except Exception as e:
+            logging.error(f"Exception Error: {e}")
+            return render_template("Error.html")
+        except:
+            return redirect("/")
+        finally:
+            con.close()
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -58,37 +61,39 @@ def signup():
 
 @app.route('/signupvalid', methods=['POST', 'GET'])
 def signupvalid():
-    if request.method == "POST":
+    if request.method == 'POST':
         con = sqlite3.connect('database.db')
         try:
-            WorkID = request.form['WorkID']
             firstName = request.form['First']
             lastName = request.form['Last']
+            WorkID = request.form['WorkID']
             password = request.form['Password']
             confirm_pass = request.form['ConfirmPassword']
             user[0] = WorkID
 
-            hashed_password = hashlib.sha1(password.encode()).hexdigest()
+            hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-            with sqlite3.connect('database.db') as con:
+            with con:
                 cur = con.cursor()
 
-                # Check WORKID is valid
+                # Check if WORKID is valid
                 if not cur.execute("SELECT * FROM ValidWorkID WHERE WORKID = ?", (WorkID,)).fetchall():
                     return render_template('InvalidWorkID.html')
 
-                # If if WorkID is already in the database, return an error
-                if WorkID in cur.execute("SELECT WORKID FROM Users").fetchall():
-                    return render_template('UserExists.html')
+                # Check if WorkID is already in the database
+                if cur.execute("SELECT * FROM Users WHERE WORKID = ?", (WorkID,)).fetchone():
+                    return render_template('WorkIDError.html')
 
                 # If password and confirm password are the same, insert the user into the database
-                if (password == confirm_pass):
-                    cur.execute("INSERT INTO Users (WORKID, First, Last, Password) VALUES (?,?,?,?)", (
-                        WorkID, firstName, lastName, hashed_password))
+                if password == confirm_pass:
+                    cur.execute("INSERT INTO Users (WORKID, Password, First, Last) VALUES (?,?,?,?)", (
+                        WorkID, hashed_password, firstName, lastName))
 
+                # Redirect regardless of the insertion status
                 return redirect("/")
 
-        except:
+        except Exception as e:
+            logging.error(f"Error: {e}")
             con.rollback()
             return render_template('Error.html')
         finally:
@@ -97,7 +102,7 @@ def signupvalid():
 
 @app.route('/main', methods=['POST', 'GET'])
 def main():
-    session_token = request.cookies.get('auth_token')
+    session_token = request.cookies.get('AuthToken')
 
     if not check_token(session_token, user[0]):
         return render_template('TokenError.html')
@@ -112,7 +117,7 @@ def main():
 
 @app.route('/uploadfile', methods=['POST', 'GET'])
 def uploadfile():
-    session_token = request.cookies.get('auth_token')
+    session_token = request.cookies.get('AuthToken')
 
     if not check_token(session_token, user[0]):
         return render_template('TokenError.html')
@@ -142,8 +147,4 @@ def addfile():
 
 if __name__ == "__main__":
     start_db()
-
-    # Open workids.txt and insert the data into the database
-
-    # Debug mode is enabled
     app.run(debug=True)
