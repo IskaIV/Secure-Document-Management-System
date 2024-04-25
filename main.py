@@ -78,3 +78,27 @@ def login():
         return render_template("/")
     finally:
         con.close()
+
+
+@app.route('/uploadfile', methods = ['POST', 'GET'])
+def uploadfile():
+    session_token = request.cookies.get('auth_token')
+
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    return render_template('UploadFile.html')
+
+@app.route('/main', methods = ['POST', 'GET'])
+def main():
+    session_token = request.cookies.get('auth_token')
+
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Posts ORDER BY Id DESC")
+    posts = cur.fetchall()
+
+    return render_template('MainPage.html', posts=posts)
