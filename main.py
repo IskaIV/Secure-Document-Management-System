@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, make_response
 import hashlib
@@ -72,16 +73,20 @@ def signupvalid():
                 cur = con.cursor()
 
                 # Check WORKID is valid
-                cur.execute(
-                    "SELECT * FROM ValidWorkID WHERE WORKID = ?", (WorkID,))
+                if WorkID not in cur.execute("SELECT WORKID FROM ValidWorkID").fetchall():
+                    con.close()
+                    return render_template('InvalidWorkID.html')
 
                 # If if WorkID is already in the database, return an error
-                cur.execute("SELECT * FROM User WHERE WORKID = ?", (WorkID,))
+                if WorkID in cur.execute("SELECT WORKID FROM Users").fetchall():
+                    con.close()
+                    return render_template('UserExists.html')
 
                 # If password and confirm password are the same, insert the user into the database
                 if (password == confirm_pass):
-                    cur.execute("INSERT INTO User (WORKID, First, Last, Password) VALUES (?,?,?,?)", (
+                    cur.execute("INSERT INTO Users (WORKID, First, Last, Password) VALUES (?,?,?,?)", (
                         WorkID, firstName, lastName, hashed_password))
+
                 return redirect("/")
 
         except:
@@ -138,4 +143,17 @@ def addfile():
 
 if __name__ == "__main__":
     start_db()
-    app.run()
+
+    # Open workids.txt and insert the data into the database
+    if not os.path.exists('workids.txt'):
+        with open('workids.txt', 'r') as file:
+            lines = file.readlines()
+            with sqlite3.connect('database.db') as con:
+                cur = con.cursor()
+                for line in lines:
+                    cur.execute(
+                        "INSERT INTO ValidWorkID (WORKID) VALUES (?)", (line.strip(),))
+                con.commit()
+
+    # Debug mode is enabled
+    app.run(debug=True)
