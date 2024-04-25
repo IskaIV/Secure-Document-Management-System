@@ -38,6 +38,9 @@ def signupvalid():
                 cur = con.cursor()
                 if (password == confirm_pass):
                     cur.execute("INSERT INTO User (WORKID, First, Last, Password) VALUES (?,?,?,?)", (WorkID, firstName, lastName, hashed_password))
+
+                #check if workid is already in the database
+                cur.execute("SELECT * FROM User WHERE WORKID = ?", (WorkID,))
                 return redirect("/")
         except:
             con.rollback()
