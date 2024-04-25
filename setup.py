@@ -12,7 +12,18 @@ def start_db():
         )
     ''')
 
-   
+    with open('workids.txt', 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            # Check if the WORKID already exists in the table
+            cursor.execute(
+                "SELECT * FROM ValidWorkID WHERE WORKID=?", (line.strip(),))
+            existing_row = cursor.fetchone()
+            if not existing_row:
+                # If the WORKID doesn't exist, insert it into the table
+                cursor.execute(
+                    "INSERT INTO ValidWorkID (WORKID) VALUES (?)", (line.strip(),))
+        conn.commit()
 
     # Create the User table
     # Use WORKID from ValidWorkID as the primary key
