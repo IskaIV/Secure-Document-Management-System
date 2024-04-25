@@ -12,7 +12,41 @@ user = ['']
 
 @app.route('/')
 def front_page():
-    return render_template('login.html')
+    return render_template('Login.html')
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    con = sqlite3.connect('database.db')
+    try:
+        WorkID = request.form['WorkID']
+        Password = request.form['Password']
+
+        hashed_password = hashlib.sha256(Password.encode()).hexdigest()
+        cur = con.cursor()
+        cur.execute("SELECT * FROM Users WHERE WorkID = ? AND Password = ?",
+                    (WorkID, hashed_password))
+        rows = cur.fetchall()
+        if len(rows) == 0:
+            return render_template("NoMatchingUser.html")
+
+        token = generate_token(WorkID)
+        user[0] = rows[0][0]
+
+        response = make_response(redirect('/main'))
+        response.set_cookie('AuthToken', token)
+
+        return response
+    except sqlite3.Error as e:
+        logging.error(f"Database Error: {e}")
+        return render_template("Error.html")
+    except Exception as e:
+        logging.error(f"Exception Error: {e}")
+        return render_template("Error.html")
+    except:
+        return render_template("/")
+    finally:
+        con.close()
 
 
 @app.route('/signup', methods=['POST', 'GET'])
@@ -55,40 +89,6 @@ def signupvalid():
             return render_template('Error.html')
         finally:
             con.close()
-
-
-@app.route('/login', methods=['POST'])
-def login():
-    con = sqlite3.connect('database.db')
-    try:
-        WorkID = request.form['WorkID']
-        Password = request.form['Password']
-
-        hashed_password = hashlib.sha256(Password.encode()).hexdigest()
-        cur = con.cursor()
-        cur.execute("SELECT * FROM Users WHERE WorkID = ? AND Password = ?",
-                    (WorkID, hashed_password))
-        rows = cur.fetchall()
-        if len(rows) == 0:
-            return render_template("NoMatchingUser.html")
-
-        token = generate_token(WorkID)
-        user[0] = rows[0][0]
-
-        response = make_response(redirect('/main'))
-        response.set_cookie('AuthToken', token)
-
-        return response
-    except sqlite3.Error as e:
-        logging.error(f"Database Error: {e}")
-        return render_template("Error.html")
-    except Exception as e:
-        logging.error(f"Exception Error: {e}")
-        return render_template("Error.html")
-    except:
-        return render_template("/")
-    finally:
-        con.close()
 
 
 @app.route('/main', methods=['POST', 'GET'])
@@ -134,6 +134,7 @@ def addfile():
         conn.commit()
         conn.close()
         return redirect('/main')
+
 
 if __name__ == "__main__":
     start_db()
