@@ -9,13 +9,13 @@
 }
 
 .header {
-    background-color: #782F40;
+    background-color: #3AAFA9;
     padding: 5px;
     text-align: left;
 }
 
 h3 {
-    color: #CEB888;
+    color: #DEF2F1;
     font-family: "Roboto";
     font-size: 12px;
     text-align: left;
@@ -52,7 +52,7 @@ input[type="submit"] {
     box-sizing: border-box;
     border: 2px solid #ccc;
     border-radius: 4px;
-    background-color: #782F40;
+    background-color: #3AAFA9;
     color: white;
     cursor: pointer;
 }

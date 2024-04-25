@@ -6,25 +6,25 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: Arial, sans-serif;
-	background: linear-gradient(#782F40, #74172d, #782F40);
+	background: linear-gradient(#3AAFA9, #2B7A78, #17252A);
 }
 
 h1 {
-	border: 2px solid #782F40;
+	border: 2px solid #3AAFA9;
 	padding: 5px;
-	background-color : #797b80;
+	background-color : #2B7A78;
 	font-size: 16px;
 	font-weight: bold;
 }
 
 h2 {
-	border: 2px solid #782F40;
+	border: 2px solid #3AAFA9;
 	padding: 5px;
 	font-size: 20px;
 }
 
 h3 {
-	border: 2px solid #782F40;
+	border: 2px solid #3AAFA9;
 	font-weight: normal;
 	padding: 10px;
 	font-size: 18px;
@@ -36,7 +36,7 @@ h3 {
 }
 
 .outer-border {
-	border: 2px solid #CEB888;
+	border: 2px solid #DEF2F1;
 	height: max-content;
 	min-width: 90%;
 	padding: 10px;
@@ -44,7 +44,7 @@ h3 {
 }
 
 .mid-border {
-	border: 6px solid #CEB888;
+	border: 6px solid #DEF2F1;
 	min-height: 100vh;
 	min-width: 96%;
 	padding: 6px;
@@ -53,7 +53,7 @@ h3 {
 
 .inner-border {
 	position: relative;
-	border: 2px solid #CEB888;
+	border: 2px solid #DEF2F1;
 	min-height: 100%;
 	padding: 10px;
 	margin: auto;
@@ -84,7 +84,7 @@ h3 {
 
 .search-bar-btn {
 	border: none;
-	background: #CEB888;
+	background: #DEF2F1;
 	border-radius: 50%;
 	float: right;
 	display: flex;
@@ -105,7 +105,7 @@ h3 {
 	padding: 0px;
 	font-size: 16px;
 	transition: 0.6s;
-	color: crimson;
+	color: rgb(20, 167, 220);
 	font-weight: bold;
 	line-height: 30px;
 	width: 0px;
@@ -117,9 +117,9 @@ h3 {
 }
 
 .search-bar:hover .search-bar-btn {
-	background: crimson;
+	background: rgb(20, 167, 220);
 	color: #FFFFFF;
-	box-shadow: 0px 5px 20px 0px crimson;
+	box-shadow: 0px 5px 20px 0px rgb(20, 167, 220);
 }
 
 .add-btn {
@@ -128,7 +128,7 @@ h3 {
 	margin: 10px 10px;
 	width: 100px;
 	height: 50px;
-	background-color: #CEB888;
+	background-color: #DEF2F1;
 	cursor: pointer;
 	border-radius: 20px;
 	font-weight: bold;
@@ -143,7 +143,7 @@ h3 {
 	margin: 10px 10px;
 	width: 100px;
 	height: 50px;
-	background-color: #CEB888;
+	background-color: #DEF2F1;
 	cursor: pointer;
 	border-radius: 20px;
 	font-weight: bold;
@@ -170,7 +170,7 @@ h3 {
 	margin: 20px;
 	width: max-content;
 	height: 40px;
-	background-color: #CEB888;
+	background-color: #DEF2F1;
 	cursor: pointer;
 	font-weight: normal;
 	font-size: 15px;
@@ -181,7 +181,7 @@ h3 {
 .add-btn:hover,
 .msg-btn:hover,
 .signout-btn:hover {
-	background-color: #74172d;
+	background-color: #3AAFA9;
 	box-shadow: 3px 3px 15px 0px rgba(82, 82, 82, 0.85);
 }
 
@@ -200,7 +200,7 @@ h3 {
 
 .corners:after,
 .corners:before {
-	background: #782F40;
+	background: #3AAFA9;
 	content: '';
 	height: 50px;
 	position: absolute;
@@ -232,7 +232,7 @@ h3 {
 	background-color: #fff;
 	margin: 10px;
 	margin-left: -22px;
-	border: 3px solid #CEB888;
+	border: 3px solid #DEF2F1;
 	border-radius: 3px;
 	padding: 10px;
 }
