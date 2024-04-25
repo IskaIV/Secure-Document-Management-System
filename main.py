@@ -134,3 +134,7 @@ def addfile():
         conn.commit()
         conn.close()
         return redirect('/main')
+
+if __name__ == "__main__":
+    start_db()
+    app.run()
