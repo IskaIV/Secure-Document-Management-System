@@ -36,12 +36,20 @@ def signupvalid():
 
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                if (password == confirm_pass):
-                    cur.execute("INSERT INTO User (WORKID, First, Last, Password) VALUES (?,?,?,?)", (WorkID, firstName, lastName, hashed_password))
 
-                #check if workid is already in the database
+                # Check WORKID is valid
+                cur.execute(
+                    "SELECT * FROM ValidWorkID WHERE WORKID = ?", (WorkID,))
+
+                # If if WorkID is already in the database, return an error
                 cur.execute("SELECT * FROM User WHERE WORKID = ?", (WorkID,))
+
+                # If password and confirm password are the same, insert the user into the database
+                if (password == confirm_pass):
+                    cur.execute("INSERT INTO User (WORKID, First, Last, Password) VALUES (?,?,?,?)", (
+                        WorkID, firstName, lastName, hashed_password))
                 return redirect("/")
+
         except:
             con.rollback()
             return render_template('Error.html')
