@@ -4,6 +4,26 @@ def start_db():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
 
+
+    #create a valid WorkID table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS validWorkID (
+            ROLE TEXT,
+            WorkID TEXT PRIMARY KEY
+                   
+        )
+    ''')
+
+    #create user table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            WORKID TEXT FORIEGN KEY,
+            Password TEXT,
+            First TEXT,
+            Last TEXT
+        )
+    ''')
+
     # Create the Login table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Login (
