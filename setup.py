@@ -1,5 +1,6 @@
 import sqlite3
 
+
 def start_db():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -7,15 +8,15 @@ def start_db():
     # Create valid WorkID table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS ValidWorkID (
-            ROLE TEXT,
             WORKID TEXT PRIMARY KEY,
         )
     ''')
 
     # Create the User table
+    # Use WORKID from ValidWorkID as the primary key
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS User (
-            WORKID TEXT FOREIGN KEY,
+        CREATE TABLE IF NOT EXISTS Users (
+            WORKID TEXT PRIMARY KEY,
             First TEXT,
             Last TEXT,
             Password TEXT
@@ -34,31 +35,11 @@ def start_db():
 
     # Create the Files table
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Posts (
-            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-            WORKID TEXT,
-            Title TEXT,
-            Description TEXT
+        CREATE TABLE IF NOT EXISTS Files (
+            FileId INTEGER PRIMARY KEY AUTOINCREMENT,
+            FileName TEXT,
+            FileData BLOB
         )
     ''')
 
-    # Create the Replies table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Replies (
-            PrimaryUser TEXT,
-            SecondaryUser TEXT,
-            Message TEXT,
-            Ind INTEGER PRIMARY KEY AUTOINCREMENT
-        )
-    ''')
-
-    # Create the Comments table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Comments (
-            PostId INTEGER,
-            CommentId INTEGER PRIMARY KEY AUTOINCREMENT,
-            Content TEXT,
-            Author TEXT
-        )
-    ''')
     cursor.close()
