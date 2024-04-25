@@ -8,9 +8,16 @@ def start_db():
     # Create valid WorkID table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS ValidWorkID (
-            WORKID TEXT PRIMARY KEY,
+            WORKID TEXT PRIMARY KEY
         )
     ''')
+
+    # Open workids.txt and insert the data into the database
+    with open('workids.txt', 'r') as file:
+        for line in file:
+            cursor.execute('''
+                INSERT INTO ValidWorkID (WORKID) VALUES (?)
+            ''', (line.strip(),))
 
     # Create the User table
     # Use WORKID from ValidWorkID as the primary key
@@ -23,16 +30,6 @@ def start_db():
         )
     ''')
 
-    # Create the Login table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS Login (
-            WORKID TEXT,
-            Password TEXT,
-            First TEXT,
-            Last TEXT
-        )
-    ''')
-
     # Create the Files table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS Files (
@@ -41,13 +38,5 @@ def start_db():
             FileData BLOB
         )
     ''')
-
-
-    with open('workers.txt', 'r') as file:
-        for line in file:
-            worker_id = line.strip()
-            if worker_id:
-                query = "INSERT INTO ValidWorkID (WORKID) VALUES (?)"
-                cursor.execute(query, (worker_id,))
 
     cursor.close()
