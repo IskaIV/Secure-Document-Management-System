@@ -23,6 +23,7 @@ def start_db():
                 # If the WORKID doesn't exist, insert it into the table
                 cursor.execute(
                     "INSERT INTO ValidWorkID (WORKID) VALUES (?)", (line.strip(),))
+
         conn.commit()
 
     # Create the User table
