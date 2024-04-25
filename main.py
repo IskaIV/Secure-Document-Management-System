@@ -109,10 +109,12 @@ def main():
 
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
+    cur.execute("SELECT * FROM Users")
+    users = cur.fetchall()
     cur.execute("SELECT * FROM Files ORDER BY FileId DESC")
-    posts = cur.fetchall()
+    files = cur.fetchall()
 
-    return render_template('MainPage.html', posts=posts)
+    return render_template('UserMainPage.html', Users=users, Files=files)
 
 
 @app.route('/uploadfile', methods=['POST', 'GET'])
