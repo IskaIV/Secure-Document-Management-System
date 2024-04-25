@@ -42,4 +42,12 @@ def start_db():
         )
     ''')
 
+
+    with open('workers.txt', 'r') as file:
+        for line in file:
+            worker_id = line.strip()
+            if worker_id:
+                query = "INSERT INTO ValidWorkID (WORKID) VALUES (?)"
+                cursor.execute(query, (worker_id,))
+
     cursor.close()
