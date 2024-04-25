@@ -66,7 +66,7 @@ def login():
 
         hashed_password = hashlib.sha256(Password.encode()).hexdigest()
         cur = con.cursor()
-        cur.execute("SELECT * FROM users WHERE WorkID = ? AND Password = ?",
+        cur.execute("SELECT * FROM Users WHERE WorkID = ? AND Password = ?",
                     (WorkID, hashed_password))
         rows = cur.fetchall()
         if len(rows) == 0:
@@ -75,7 +75,7 @@ def login():
         token = generate_token(WorkID)
         user[0] = rows[0][0]
 
-        response = make_response(redirect('/home'))
+        response = make_response(redirect('/main'))
         response.set_cookie('AuthToken', token)
 
         return response
@@ -91,16 +91,7 @@ def login():
         con.close()
 
 
-@app.route('/uploadfile', methods = ['POST', 'GET'])
-def uploadfile():
-    session_token = request.cookies.get('auth_token')
-
-    if not check_token(session_token, user[0]):
-        return render_template('TokenError.html')
-
-    return render_template('UploadFile.html')
-
-@app.route('/main', methods = ['POST', 'GET'])
+@app.route('/main', methods=['POST', 'GET'])
 def main():
     session_token = request.cookies.get('auth_token')
 
@@ -109,7 +100,37 @@ def main():
 
     conn = sqlite3.connect('database.db')
     cur = conn.cursor()
-    cur.execute("SELECT * FROM Posts ORDER BY Id DESC")
+    cur.execute("SELECT * FROM Files ORDER BY Id DESC")
     posts = cur.fetchall()
 
     return render_template('MainPage.html', posts=posts)
+
+
+@app.route('/uploadfile', methods=['POST', 'GET'])
+def uploadfile():
+    session_token = request.cookies.get('auth_token')
+
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    return render_template('UploadFile.html')
+
+
+@app.route('/addfile', methods=['POST', 'GET'])
+def addfile():
+    session_token = request.cookies.get('auth_token')
+
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    if request.method == 'POST':
+        conn = sqlite3.connect('database.db')
+        cur = conn.cursor()
+        file = request.files['file']
+        filename = file.filename
+        filedata = file.read()
+        cur.execute(
+            "INSERT INTO Files (FileName, FileData) VALUES (?, ?)", (filename, filedata))
+        conn.commit()
+        conn.close()
+        return redirect('/main')
