@@ -25,9 +25,9 @@ def signupvalid():
     if request.method == "POST":
         con = sqlite3.connect('database.db')
         try:
+            WorkID = request.form['WorkID']
             firstName = request.form['First']
             lastName = request.form['Last']
-            WorkID = request.form['WorkID']
             password = request.form['Password']
             confirm_pass = request.form['ConfirmPassword']
             user[0] = WorkID
@@ -37,7 +37,7 @@ def signupvalid():
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
                 if (password == confirm_pass):
-                    cur.execute("INSERT INTO Login (FSUID, Password, First, Last) VALUES (?,?,?,?)", (WorkID, hashed_password, firstName, lastName))
+                    cur.execute("INSERT INTO User (WORKID, First, Last, Password) VALUES (?,?,?,?)", (WorkID, firstName, lastName, hashed_password))
                 return redirect("/")
         except:
             con.rollback()
