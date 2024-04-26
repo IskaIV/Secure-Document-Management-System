@@ -33,7 +33,8 @@ def start_db():
             WORKID TEXT PRIMARY KEY,
             First TEXT,
             Last TEXT,
-            Password TEXT
+            Password TEXT,
+            Role TEXT
         )
     ''')
 

@@ -38,10 +38,20 @@ def login():
             token = generate_token(WorkID)
             user[0] = rows[0][0]
 
-            response = make_response(redirect('/main'))
-            response.set_cookie('AuthToken', token)
+            # Check Users table for the role of the user and assign it to the role
+            role = cur.execute(
+                "SELECT Role FROM Users WHERE WORKID = ?", (WorkID)).fetchone()[4]
 
-            return response
+            # Redirect to the appropriate page based on the role
+            if role == 'Admin':
+                return redirect('/AdminMainPage')
+            elif role == 'Manager':
+                return redirect('/ManagerMainPage')
+            else:
+                response = make_response(redirect('/main'))
+                response.set_cookie('AuthToken', token)
+                return response
+
         except sqlite3.Error as e:
             logging.error(f"Database Error: {e}")
             return render_template("Error.html")
@@ -69,6 +79,13 @@ def signupvalid():
             WorkID = request.form['WorkID']
             password = request.form['Password']
             confirm_pass = request.form['ConfirmPassword']
+            # Check if the user is Admin, Manager, or User
+            if WorkID[0] == 'A':
+                role = 'Admin'
+            elif WorkID[0] == 'M':
+                role = 'Manager'
+            else:
+                role = 'User'
             user[0] = WorkID
 
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
@@ -82,12 +99,14 @@ def signupvalid():
 
                 # Check if WorkID is already in the database
                 if cur.execute("SELECT * FROM Users WHERE WORKID = ?", (WorkID,)).fetchone():
-                    return render_template('WorkIDError.html')
+                    return render_template('InvalidWorkID.html')
 
                 # If password and confirm password are the same, insert the user into the database
                 if password == confirm_pass:
                     cur.execute("INSERT INTO Users (WORKID, Password, First, Last) VALUES (?,?,?,?)", (
                         WorkID, hashed_password, firstName, lastName))
+                    cur.execute(
+                        "UPDATE Users SET Role = ? WHERE WORKID = ?", (role, WorkID))
 
                 # Redirect regardless of the insertion status
                 return redirect("/")
@@ -100,7 +119,7 @@ def signupvalid():
             con.close()
 
 
-@app.route('/main', methods=['POST', 'GET'])
+@app.route('/UserMainPage', methods=['POST', 'GET'])
 def main():
     session_token = request.cookies.get('AuthToken')
 
@@ -115,16 +134,6 @@ def main():
     files = cur.fetchall()
 
     return render_template('UserMainPage.html', Users=users, Files=files)
-
-
-@app.route('/uploadfile', methods=['POST', 'GET'])
-def uploadfile():
-    session_token = request.cookies.get('AuthToken')
-
-    if not check_token(session_token, user[0]):
-        return render_template('TokenError.html')
-
-    return render_template('UploadFile.html')
 
 
 @app.route('/addfile', methods=['POST', 'GET'])
