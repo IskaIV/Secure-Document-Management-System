@@ -10,7 +10,7 @@ body {
 h1 {
 	border: 2px solid #3AAFA9;
 	padding: 5px;
-	background-color: #2B7A78;
+	background-color : #2B7A78;
 	font-size: 16px;
 	font-weight: bold;
 }
@@ -120,72 +120,10 @@ h3 {
 	box-shadow: 0px 5px 20px 0px rgb(20, 167, 220);
 }
 
-.add-WID-btn {
-	position: absolute;
-	top: 20px;
-	left: 10px;
-	margin: 10px 10px;
-	width: 100px;
-	height: 50px;
-	background-color: #DEF2F1;
-	cursor: pointer;
-	border-radius: 20px;
-	font-weight: bold;
-	font-size: 15px;
-	transition: all 0.2s ease-in-out;
-}
-
-.remove-WID-btn
-{
-	position: absolute;
-	top: 20px;
-	left: 60px;
-	margin: 10px 10px;
-	width: 100px;
-	height: 50px;
-	background-color: #DEF2F1;
-	cursor: pointer;
-	border-radius: 20px;
-	font-weight: bold;
-	font-size: 15px;
-	transition: all 0.2s ease-in-out;
-}
-
-
-.remove-user-btn {
-	position: absolute;
-	top: 20px;
-	left: 125px;
-	margin: 10px 10px;
-	width: 100px;
-	height: 50px;
-	background-color: #DEF2F1;
-	cursor: pointer;
-	border-radius: 20px;
-	font-weight: bold;
-	font-size: 15px;
-	transition: all 0.2s ease-in-out;
-}
-
-.signout-btn {
-	position: absolute;
-	top: 20px;
-	left: 160px;
-	margin: 10px 10px;
-	width: 100px;
-	height: 50px;
-	background-color: #DEF2F1;
-	cursor: pointer;
-	border-radius: 20px;
-	font-weight: bold;
-	font-size: 15px;
-	transition: all 0.2s ease-in-out;
-}
-
 .add-btn {
 	position: absolute;
 	top: 20px;
-	left: 310px;
+	left: 0px;
 	margin: 10px 10px;
 	width: 100px;
 	height: 50px;
@@ -200,7 +138,7 @@ h3 {
 .remove-btn {
 	position: absolute;
 	top: 20px;
-	left: 400px;
+	left: 120px;
 	margin: 10px 10px;
 	width: 100px;
 	height: 50px;
@@ -212,10 +150,49 @@ h3 {
 	transition: all 0.2s ease-in-out;
 }
 
+.download-btn {
+	position: absolute;
+	top: 20px;
+	left: 240px;
+	margin: 10px 10px;
+	width: 100px;
+	height: 50px;
+	background-color: #DEF2F1;
+	cursor: pointer;
+	border-radius: 20px;
+	font-weight: bold;
+	font-size: 15px;
+	transition: all 0.2s ease-in-out;
+}
+
+.signout-btn {
+	position: absolute;
+	top: 20px;
+	left: 360px;
+	margin: 10px 10px;
+	width: 100px;
+	height: 50px;
+	background-color: #DEF2F1;
+	cursor: pointer;
+	border-radius: 20px;
+	font-weight: bold;
+	font-size: 15px;
+	transition: all 0.2s ease-in-out;
+}
+
+.seemore-btn {
+	margin: 20px;
+	width: max-content;
+	height: 40px;
+	background-color: #DEF2F1;
+	cursor: pointer;
+	font-weight: normal;
+	font-size: 15px;
+	transition: all 0.2s ease-in-out;
+
+}
+
 .add-btn:hover,
-.add-WID-btn:hover,
-.remove-WID-btn:hover,
-.remove-user-btn:hover,
 .msg-btn:hover,
 .signout-btn:hover {
 	background-color: #3AAFA9;
