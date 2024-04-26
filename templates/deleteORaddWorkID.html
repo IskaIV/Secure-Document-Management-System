@@ -5,8 +5,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>FileBoss Login</title>
-        <link rel="stylesheet" href="/static/deleteORaddWorkIDstyle.css" />
+        <link rel="stylesheet" href="/static/EditWorkID.css" />
     </head>
 
     <body>
@@ -18,26 +17,17 @@
                     <div class="logo"><img src="/static/logo.png" /></div>
                 </div>
 
-                <!-- Login Form -->
-                <form action="{{url_for('login')}}" method="POST">
-                    <div class="login-container">
-                        <!-- Login Input Group -->
-                        <div class="input-group">
-                            <label for="WorkId">WorkID:</label>
-                            <input type="text" id="WorkId" name="WorkID" placeholder="Work ID" required="">
-                        </div>
-                        <!-- Login Button -->
-                        <button class="login-btn" type="submit" value="Add">Add ID</button>
-                        <button class="login-btn" type="submit" value="Remove">Remove ID</button>
+                <!-- Form to add or delete WorkID -->
+                <form action="/editWorkID" method="post">
+                    <div class="form">
+                        <label for="workID">WorkID:</label>
+                        <input type="text" id="workID" name="workID" required />
+                        <label for="delete">Delete:</label>
+                        <input type="checkbox" id="delete" name="delete" />
+                        <input type="submit" value="Submit" />
                     </div>
 
                 </form>
-
-                <!-- Sign Up Option -->
-                <div class="signup-container">
-                    <p>Return to Admin Main Page</p>
-                    <a href="/AdminMainPage"><button class="signup-btn">Go Back</button></a>
-                </div>
             </div>
         </div>
     </body>
