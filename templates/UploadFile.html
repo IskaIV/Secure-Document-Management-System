@@ -13,19 +13,19 @@
                 <div class="inner-border">
 
                     <div class="logo"><img src="/static/logo.png" /></div>
+                    <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
                     <div class="corners">
                         <div class="feed">
-                            <h1>Upload A File</h1>
+                            <div class="title-box">
+                                <h1>Upload A File</h1>
 
-                            <a href="/"><button class="home-btn" type="button">Home</button></a>
-
-                            <div>
-                                <h2>Upload Your File</h2>
                             </div>
-                            <form action="{{url_for('uploadfile')}}" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="file" name="file">
-                                <button class="submit-btn" type="submit">Submit</button>
-                            </form>
+                            <div class="select">
+                                <form action="{{url_for('uploadfile')}}" method="POST" enctype="multipart/form-data">
+                                    <input type="file" id="file" name="file">
+                                    <button class="submit-btn" type="submit">Submit</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>

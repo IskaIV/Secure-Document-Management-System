@@ -1,22 +1,19 @@
 import sqlite3
-from flask import Flask, render_template, request, redirect, make_response, url_for, flash, send_file
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, render_template, redirect, request, make_response, url_for, flash, send_file, session
 from io import BytesIO
 from werkzeug.utils import secure_filename
 import hashlib
 import logging
 from setup import start_db
 from check import generate_token, check_token
-import os
+
 
 UPLOAD_FOLDER = '/home/poisoniv/Code/COP4521/Project1/files'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -51,13 +48,19 @@ def login():
             token = generate_token(WorkID)
             user[0] = rows[0][0]
 
-            # Check Users table for the role of the user and assign it to the role
-
-            # Redirect to the appropriate page based on the role
-            response = make_response(redirect("/AdminMainPage"))
-            response.set_cookie('AuthToken', token)
+            # Check if the user is Admin, Manager, or User
+            if WorkID[0] == 'A':
+                response = make_response(redirect("/AdminMainPage"))
+                response.set_cookie('AuthToken', token)
+            elif WorkID[0] == 'M':
+                response = make_response(redirect("/ManagerMainPage"))
+                response.set_cookie('AuthToken', token)
+            elif WorkID[0] == 'U':
+                response = make_response(redirect("/UserMainPage"))
+                response.set_cookie('AuthToken', token)
 
             return response
+
         except sqlite3.Error as e:
             logging.error(f"Database Error: {e}")
             return render_template("Error.html")
@@ -125,10 +128,38 @@ def signupvalid():
             con.close()
 
 
-@app.route('/AdminMainPage', methods=['POST', 'GET'])
-def main():
+@app.route('/UserMainPage', methods=['POST', 'GET'])
+def UserMain():
     session_token = request.cookies.get('AuthToken')
 
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Files ORDER BY FileId DESC")
+    files = cur.fetchall()
+
+    return render_template('UserMainPage.html', Files=files)
+
+
+@app.route('/ManagerMainPage', methods=['POST', 'GET'])
+def ManagerMain():
+    session_token = request.cookies.get('AuthToken')
+    if not check_token(session_token, user[0]):
+        return render_template('TokenError.html')
+
+    conn = sqlite3.connect('database.db')
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM Files ORDER BY FileId DESC")
+    files = cur.fetchall()
+
+    return render_template('ManagerMainPage.html', Files=files)
+
+
+@app.route('/AdminMainPage', methods=['POST', 'GET'])
+def AdminMain():
+    session_token = request.cookies.get('AuthToken')
     if not check_token(session_token, user[0]):
         return render_template('TokenError.html')
 
@@ -149,6 +180,10 @@ def allowed_file(filename):
 @app.route('/uploadfile', methods=['POST', 'GET'])
 def uploadfile():
     if request.method == 'POST':
+        session_token = request.cookies.get('AuthToken')
+        if not check_token(session_token, user[0]):
+            return render_template('TokenError.html')
+
         # Check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -172,7 +207,12 @@ def uploadfile():
                 "INSERT INTO Files (FileName, FileData, WorkID) VALUES (?, ?, ?)", (filename, file_data, user[0]))
             conn.commit()
             conn.close()
-            return redirect(url_for('uploadfile'))
+
+        # Check if the user is Admin, Manager, or User
+        if user[0][0] == 'A':
+            return redirect(url_for('AdminMain'))
+        elif user[0][0] == 'M':
+            return redirect(url_for('ManagerMain'))
     return render_template('UploadFile.html')
 
 
@@ -180,11 +220,9 @@ def uploadfile():
 def downloadfile(file_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute("SELECT FileName, FileData FROM Files WHERE FileId=?", (file_id,))
-    file_record = cursor.fetchone()
-    conn.close()
-
- 
+    cursor.execute("SELECT * FROM Files WHERE FileId=?", (file_id,))
+    file = cursor.fetchone()
+    return send_file(BytesIO(file[2]), download_name=file[1], as_attachment=True)
 
 
 @app.route('/deletefile/<int:file_id>')
@@ -200,6 +238,10 @@ def deletefile(file_id):
 @app.route('/EditWorkID', methods=['POST', 'GET'])
 def EditWorkID():
     if request.method == 'POST':
+        session_token = request.cookies.get('AuthToken')
+        if not check_token(session_token, user[0]):
+            return render_template('TokenError.html')
+
         action = request.form.get('action')
         work_id = request.form.get('work_id')
 
@@ -213,6 +255,7 @@ def EditWorkID():
 
     return render_template('EditWorkID.html', work_ids=work_ids)
 
+
 def add_work_id(work_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -223,20 +266,29 @@ def add_work_id(work_id):
 
     if not existing_row:
         # If the WORKID doesn't exist, insert it into the table
-        cursor.execute("INSERT INTO ValidWorkID (WORKID) VALUES (?)", (work_id,))
+        cursor.execute(
+            "INSERT INTO ValidWorkID (WORKID) VALUES (?)", (work_id,))
         conn.commit()
+    else:
+        return
 
     conn.close()
+
 
 def delete_work_id(work_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
+
+    # Check that the WORKID isn't current user's WORKID
+    if work_id == user[0]:
+        return
 
     # Delete the specified WORKID from the table
     cursor.execute("DELETE FROM ValidWorkID WHERE WORKID=?", (work_id,))
     conn.commit()
 
     conn.close()
+
 
 def fetch_work_ids():
     conn = sqlite3.connect('database.db')
@@ -254,14 +306,20 @@ def fetch_work_ids():
 @app.route('/DeleteUser', methods=['POST', 'GET'])
 def DeleteUser():
     if request.method == 'POST':
+        session_token = request.cookies.get('AuthToken')
+        if not check_token(session_token, user[0]):
+            return render_template('TokenError.html')
+
         work_id = request.form.get('work_id')
         delete_user(work_id)
-        return redirect(url_for('main'))  # Redirect to the main page after deletion
+        # Redirect to the main page after deletion
+        return redirect(url_for('AdminMain'))
 
     # Fetch all user names from the Users table
     users = fetch_user_names()
 
     return render_template('DeleteUser.html', users=users)
+
 
 def fetch_user_names():
     conn = sqlite3.connect('database.db')
@@ -275,6 +333,7 @@ def fetch_user_names():
 
     return users
 
+
 def delete_user(work_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -286,7 +345,41 @@ def delete_user(work_id):
     conn.close()
 
 
+@app.route("/search", methods=['POST', 'GET'])
+def searched():
+    if request.method == "POST":
+        conn = sqlite3.connect('database.db')
+        try:
+            searched = request.form["searched"]
+            cur = conn.cursor()
+            query = """
+                SELECT * FROM Files
+                WHERE FileID LIKE ?
+                OR FileName LIKE ? COLLATE NOCASE
+                OR WorkID LIKE ?
+                ORDER BY FileID DESC"""
+
+            cur.execute(query, ('%' + searched + '%', '%' +
+                        searched + '%', '%' + searched + '%'))
+
+            files = cur.fetchall()
+
+            # Check if the user is Admin, Manager, or User
+            if user[0][0] == 'A':
+                return render_template('AdminMainPage.html', Files=files)
+            elif user[0][0] == 'M':
+                return render_template('ManagerMainPage.html', Files=files)
+            elif user[0][0] == 'U':
+                return render_template('UserMainPage.html', Files=files)
+
+        except:
+            conn.rollback()
+            return render_template('Error.html')
+        finally:
+            conn.close()
+
 
 if __name__ == "__main__":
+    # Start the database
     start_db()
     app.run(debug=True)

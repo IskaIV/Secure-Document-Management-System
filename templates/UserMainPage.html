@@ -27,32 +27,26 @@
                         </form>
                     </div>
 
-
-                    <a href="/download"><button class="download-btn" type="button">Download</button></a>
+                    <a href="/UserMainPage"><button class="home-btn" type="button">Home</button></a>
                     <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
+                    <div class="corners">
+                        <div class="feed">
+                            {% for file in Files %}
+                            <div class="file-container">
+                                <article class="files">
+                                    <h1> {{ file[1] }}</h1>
 
-                </div>
-
-                <div class="corners">
-                    <div class="feed">
-                        {% for file in Files %}
-                        <div class="post__content">
-                            <div class="post__top">
-                                <h1> {{ file[1] }}</h1>
+                                    <!-- Button to download -->
+                                    <a href="{{ url_for('downloadfile', file_id=file[0]) }}"><button
+                                            class="download-btn" type="button">Download</button></a>
+                              
                             </div>
-                            <article class="post">
-                                <h2>{{ file[2] }}</a></h2>
-                                <h3>{{ file[3] }}</h3>
-                                <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button class="seemore-btn">See
-                                        More</button> </a>
                             </article>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
-
                     </div>
                 </div>
             </div>
-        </div>
     </body>
 
 </html>

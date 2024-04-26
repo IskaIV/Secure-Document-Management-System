@@ -1,22 +1,23 @@
 html,
 body {
     height: max-content;
-    margin: 0;
+    margin: auto auto;
     padding: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(#3AAFA9, #2B7A78, #17252A);
 }
 
 h1 {
-    border: 2px solid #3AAFA9;
+
     padding: 5px;
-    background-color: #2B7A78;
     font-size: 16px;
     font-weight: bold;
 }
 
 h2 {
     border: 2px solid #3AAFA9;
+    width: 20%;
+    margin: auto auto;
     padding: 5px;
     font-size: 20px;
 }
@@ -38,7 +39,7 @@ h3 {
     height: max-content;
     min-width: 90%;
     padding: 10px;
-    margin: 10px;
+    margin: auto auto;
 }
 
 .mid-border {
@@ -46,7 +47,7 @@ h3 {
     min-height: 100vh;
     min-width: 96%;
     padding: 6px;
-    margin: auto;
+    margin: auto auto;
 }
 
 .inner-border {
@@ -54,25 +55,40 @@ h3 {
     border: 2px solid #DEF2F1;
     min-height: 100%;
     padding: 10px;
-    margin: auto;
-    margin-bottom: 100px;
+    margin: auto auto;
 }
 
 .logo {
     text-align: center;
-    margin: 10px;
+    margin: auto auto;
 }
 
 .logo img {
     width: 70px;
     height: 70px;
+    margin: auto auto;
 }
 
 
-.home-WID-btn {
+.home-btn {
     position: absolute;
     top: 20px;
-    left: 60px;
+    left: 135px;
+    margin: 10px 10px;
+    width: 100px;
+    height: 50px;
+    background-color: #DEF2F1;
+    cursor: pointer;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.signout-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
     margin: 10px 10px;
     width: 100px;
     height: 50px;
@@ -85,10 +101,11 @@ h3 {
 }
 
 .submit-btn {
-    position: absolute;
+    text-align: center;
+    display: block;
+    margin: auto auto;
+    position: relative;
     top: 20px;
-    left: 160px;
-    margin: 10px 10px;
     width: 100px;
     height: 50px;
     background-color: #DEF2F1;
@@ -101,6 +118,7 @@ h3 {
 
 
 .home-btn:hover,
+.signout-btn:hover,
 .submit-btn:hover {
     background-color: #3AAFA9;
     box-shadow: 3px 3px 15px 0px rgba(82, 82, 82, 0.85);
@@ -141,13 +159,50 @@ h3 {
 }
 
 .feed {
+    position: relative;
+    padding: 10px auto;
     text-align: center;
-    position: absolute;
-    left: 320px;
     border-radius: 20px;
-    margin: 0 auto;
-    width: 600px;
-    padding: 10px 0;
-    font-size: 22px;
-    /* Rounded Corners */
+}
+
+.title-box {
+    text-align: center;
+    background: #978b8b;
+    height: max-content;
+    margin: 50px auto;
+    width: 700px;
+    position: relative;
+    min-height: 100px;
+    box-shadow: 0 1px 7px hsla(0, 0%, 0%, 0.2);
+    background-attachment: fixed;
+    background-blend-mode: multiply;
+
+}
+
+.border-box {
+    position: absolute;
+    left: 250px;
+    right: 100%;
+    top: 20px;
+    width: 200px;
+    height: 50px;
+    background-color: #9dcaca;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.users {
+    margin: auto auto;
+    position: absolute;
+    text-align: center;
+    left: 100px;
+    right: 100%;
+    top: 300px;
+    width: 500px;
+    height: auto;
+    border: 2px solid #17252A;
+    background-color: #9dcaca;
+    font-weight: bold;
+    font-size: 16px;
 }
