@@ -1,0 +1,35 @@
+<!-- Page Admin's see when deleting or adding a WorkID -->
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/static/EditWorkID.css" />
+    </head>
+
+    <body>
+        <!-- Border -->
+        <div class="outer-border">
+            <div class="mid-border">
+                <div class="inner-border">
+                    <!-- Logo Place Holder -->
+                    <div class="logo"><img src="/static/logo.png" /></div>
+                </div>
+
+                <!-- Form to add or delete WorkID -->
+                <form action="/editWorkID" method="post">
+                    <div class="form">
+                        <label for="workID">WorkID:</label>
+                        <input type="text" id="workID" name="workID" required />
+                        <label for="delete">Delete:</label>
+                        <input type="checkbox" id="delete" name="delete" />
+                        <input type="submit" value="Submit" />
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </body>
+
+</html>
