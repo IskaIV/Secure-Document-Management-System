@@ -142,9 +142,12 @@ h3 {
 
 .feed {
     text-align: center;
+    position: absolute;
+    left: 320px;
     border-radius: 20px;
     margin: 0 auto;
     width: 600px;
     padding: 10px 0;
+    font-size: 22px;
     /* Rounded Corners */
 }
