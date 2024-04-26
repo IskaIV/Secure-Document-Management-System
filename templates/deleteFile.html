@@ -1,17 +1,61 @@
-<!-- The page Manager's and Admin's see when deleting a file -->
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Delete File</title>
-    <link rel="stylesheet" type="text/css" href="css/deleteFile.css">
-</html>
-<body>
-    <div class="container">
-        <h1>Delete File</h1>
-        <p>Are you sure you want to delete this file?</p>
-        <form action="/deleteFile" method="POST">
-            <input type="submit" value="Delete">
-        </form>
-    </div>
-</body>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=devicewidth, initial-scale=1.0" />
+        <title>Main Page</title>
+        <link rel="stylesheet" href="/static/deleteFile.css">
+    </head>
+
+    <body>
+        <div class="outer-border">
+            <div class="mid-border">
+                <div class="inner-border">
+
+                  
+                    <div class="search-bar">
+                        <form method="POST" action="/search">
+                            <input class="search-bar-txt" type="text" placeholder="Search..." name="searched">
+                            <button class="search-bar-btn" type="submit"><svg xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                    class="feather feather-search">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg></button>
+                        </form>
+                    </div>
+
+                    <div class="UserName">
+                        <h1>Welcome, {{ WorkID }}</h1>
+
+           
+                        <a href="/"><button class="msg-btn" type="button">Sign Out</button></a>
+
+                    </div>
+
+                    <div class="corners">
+                        <div class="feed">
+                            {% for post in posts %}
+                            <div class="post__content">
+                                <div class="post__top">
+                                    <h1> {{ post[1] }}</h1>
+                                </div>
+                                <article class="post">
+                                    <h2>{{ post[2] }}</a></h2>
+                                    <h3>{{ post[3] }}</h3>
+                                    <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button
+                                            class="seemore-btn">See
+                                            More</button> </a>
+                                </article>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </body>
+
 </html>
