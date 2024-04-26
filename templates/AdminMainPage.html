@@ -27,19 +27,27 @@
                         </form>
                     </div>
 
-                    <div class="UserName">
-                        <h1>Welcome, {{ WorkID }}</h1>
-                        <a href="/download"><button class="download-btn" type="button">Download Files</button></a>
-                        <a href="/deleteORaddWorkID"><button class="add-WID-btn" type="button">Manage WorkIDs</button></a>
-                        <a href="/deleteUser"><button class="remove-user-btn" type="button">Delete User</button></a>
-                        <a href="/addfile"><button class="add-btn" type="button">Upload A File</button></a>
-                        <a href="/detelefile"><button class="remove-btn" type="button">Delete A File</button></a>
-                        <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
-
-                    </div>
+                    <a href="/EditWorkID"><button class="WID-btn" type="button">Add/Delete WorkID</button></a>
+                    <a href="/deleteUser"><button class="remove-user-btn" type="button">Delete User</button></a>
+                    <a href="/uploadfile"><button class="add-btn" type="button">Upload A File</button></a>
+                    <a href="/detelefile"><button class="remove-btn" type="button">Delete A File</button></a>
+                    <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
 
                     <div class="corners">
                         <div class="feed">
+                            {% for file in Files %}
+                            <div class="post__container">
+                                <div class="post__top">
+                                    <h1> {{ file[1] }}</h1>
+                                </div>
+                                <article class="post">
+                                    <h3>{{ file[4] }}</h3>
+                                    <!-- Button to download -->
+                                    <a href="{{ url_for('downloadfile', file_id=file[0]) }}"><button
+                                            class="download-btn" type="button">Download</button></a>
+                                </article>
+                            </div>
+                            {% endfor %}
 
                         </div>
                     </div>
