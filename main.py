@@ -39,19 +39,13 @@ def login():
             user[0] = rows[0][0]
 
             # Check Users table for the role of the user and assign it to the role
-            role = cur.execute(
-                "SELECT Role FROM Users WHERE WORKID = ?", (WorkID)).fetchone()[4]
+
 
             # Redirect to the appropriate page based on the role
-            if role == 'Admin':
-                return redirect('/AdminMainPage')
-            elif role == 'Manager':
-                return redirect('/ManagerMainPage')
-            else:
-                response = make_response(redirect('/main'))
-                response.set_cookie('AuthToken', token)
-                return response
+            response = make_response(redirect("/AdminMainPage"))
+            response.set_cookie('AuthToken', token)
 
+            return response
         except sqlite3.Error as e:
             logging.error(f"Database Error: {e}")
             return render_template("Error.html")
@@ -119,7 +113,7 @@ def signupvalid():
             con.close()
 
 
-@app.route('/UserMainPage', methods=['POST', 'GET'])
+@app.route('/AdminMainPage', methods=['POST', 'GET'])
 def main():
     session_token = request.cookies.get('AuthToken')
 
@@ -133,10 +127,10 @@ def main():
     cur.execute("SELECT * FROM Files ORDER BY FileId DESC")
     files = cur.fetchall()
 
-    return render_template('UserMainPage.html', Users=users, Files=files)
+    return render_template('AdminMainPage.html', Users=users, Files=files)
 
 
-@app.route('/addfile', methods=['POST', 'GET'])
+@app.route('/uploadfile', methods=['POST', 'GET'])
 def addfile():
     session_token = request.cookies.get('AuthToken')
 
@@ -154,6 +148,7 @@ def addfile():
         conn.commit()
         conn.close()
         return redirect('/main')
+    return render_template('UploadFile.html')
 
 
 if __name__ == "__main__":
