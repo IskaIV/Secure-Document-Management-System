@@ -18,18 +18,19 @@
                 </div>
 
                 <!-- Form to add or delete WorkID -->
-                <form action="/editWorkID" method="post">
-                    <div class="feed">
-                        <label for="workID">Enter a WorkID:</label><br>
-                        <input type="text" id="workID" name="EditWorkID" required /><br><br>
-                        <label for="add">Add:</label>
-                        <input type="radio" id="add" name="EditWorkID" />
-                        <label for="delete">Delete:</label>
-                        <input type="radio" id="delete" name="EditWorkID" /><br><br>
-                        <input type="submit" value="Submit" />
-                    </div>
-
+                <form method="POST">
+                    <input type="text" name="work_id" placeholder="Enter WorkID">
+                    <select name="action">
+                        <option value="add">Add</option>
+                        <option value="delete">Delete</option>
+                    </select>
+                    <button type="submit">Submit</button>
                 </form>
+                
+                {% for work_id in work_ids %}
+                    <p>{{ work_id }}</p>
+                {% endfor %}
+                
             </div>
         </div>
     </body>
