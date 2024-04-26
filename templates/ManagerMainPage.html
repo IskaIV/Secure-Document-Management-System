@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=devicewidth, initial-scale=1.0" />
         <title>Main Page</title>
-        <link rel="stylesheet" href="/static/ManagerMainPagestyle.css">
+        <link rel="stylesheet" href="/static/ManagerMainPage.css">
     </head>
 
     <body>
@@ -29,15 +29,29 @@
 
                     <div class="UserName">
                         <h1>Welcome, {{ WorkID }}</h1>
-                        <a href="/download"><button class="download-btn" type="button">Download Files</button></a>
+
                         <a href="/addfile"><button class="add-btn" type="button">Upload A File</button></a>
                         <a href="/detelefile"><button class="remove-btn" type="button">Delete A File</button></a>
-                        <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
+                        <a href="/"><button class="msg-btn" type="button">Sign Out</button></a>
 
                     </div>
 
                     <div class="corners">
                         <div class="feed">
+                            {% for post in posts %}
+                            <div class="post__content">
+                                <div class="post__top">
+                                    <h1> {{ post[1] }}</h1>
+                                </div>
+                                <article class="post">
+                                    <h2>{{ post[2] }}</a></h2>
+                                    <h3>{{ post[3] }}</h3>
+                                    <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button
+                                            class="seemore-btn">See
+                                            More</button> </a>
+                                </article>
+                            </div>
+                            {% endfor %}
 
                         </div>
                     </div>
