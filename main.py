@@ -199,7 +199,56 @@ def deletefile(file_id):
 
 @app.route('/EditWorkID', methods=['POST', 'GET'])
 def EditWorkID():
-    return render_template('EditWorkID.html')
+    if request.method == 'POST':
+        action = request.form.get('action')
+        work_id = request.form.get('work_id')
+
+        if action == 'add':
+            add_work_id(work_id)
+        elif action == 'delete':
+            delete_work_id(work_id)
+
+    # Fetch all existing WorkIDs from the database
+    work_ids = fetch_work_ids()
+
+    return render_template('EditWorkID.html', work_ids=work_ids)
+
+def add_work_id(work_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Check if the WORKID already exists in the table
+    cursor.execute("SELECT * FROM ValidWorkID WHERE WORKID=?", (work_id,))
+    existing_row = cursor.fetchone()
+
+    if not existing_row:
+        # If the WORKID doesn't exist, insert it into the table
+        cursor.execute("INSERT INTO ValidWorkID (WORKID) VALUES (?)", (work_id,))
+        conn.commit()
+
+    conn.close()
+
+def delete_work_id(work_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Delete the specified WORKID from the table
+    cursor.execute("DELETE FROM ValidWorkID WHERE WORKID=?", (work_id,))
+    conn.commit()
+
+    conn.close()
+
+def fetch_work_ids():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Fetch all existing WorkIDs from the database
+    cursor.execute("SELECT WORKID FROM ValidWorkID")
+    work_ids = [row[0] for row in cursor.fetchall()]
+
+    conn.close()
+
+    return work_ids
 
 
 @app.route('/DeleteUser', methods=['POST', 'GET'])
