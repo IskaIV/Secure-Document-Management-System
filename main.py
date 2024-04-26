@@ -1,17 +1,22 @@
 import sqlite3
 from flask import Flask, render_template, request, redirect, make_response, url_for, flash, send_file
+from flask_sqlalchemy import SQLAlchemy
+from io import BytesIO
 from werkzeug.utils import secure_filename
 import hashlib
 import logging
 from setup import start_db
 from check import generate_token, check_token
-import io
+import os
 
 UPLOAD_FOLDER = '/home/poisoniv/Code/COP4521/Project1/files'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -175,21 +180,31 @@ def uploadfile():
 def downloadfile(file_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute(
-        "SELECT FileName, FileData FROM Files WHERE FileId=?", (file_id,))
+    cursor.execute("SELECT FileName, FileData FROM Files WHERE FileId=?", (file_id,))
     file_record = cursor.fetchone()
     conn.close()
 
-    if file_record:
-        filename, file_data = file_record
-        return send_file(io.BytesIO(file_data), attachment_filename=filename, as_attachment=True)
-    else:
-        return "File not found"
+ 
+
+
+@app.route('/deletefile/<int:file_id>')
+def deletefile(file_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM Files WHERE FileId=?", (file_id,))
+    conn.commit()
+    conn.close()
+    return redirect(request.referrer)
 
 
 @app.route('/EditWorkID', methods=['POST', 'GET'])
 def EditWorkID():
     return render_template('EditWorkID.html')
+
+
+@app.route('/DeleteUser', methods=['POST', 'GET'])
+def DeleteUser():
+    return render_template('DeleteUser.html')
 
 
 if __name__ == "__main__":
