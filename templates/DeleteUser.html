@@ -1,18 +1,26 @@
-<!-- Page Admin's see when deleting a user -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delete User</title>
-    <link rel="stylesheet" type="text/css" href="DeleteUser.css">
-</html>
+    <link rel="stylesheet" href="/static/DeleteUser.css">
+</head>
+
 <body>
-    <h1>Delete User</h1>
-    <p>Are you sure you want to delete this user?</p>
-    <form action="/deleteUser" method="post">
-        <input type="submit" value="Yes">
-    </form>
-    <form action="/admin" method="get">
-        <input type="submit" value="No">
-    </form>
+    <div class="container">
+        <h1>Delete User</h1>
+        <form method="POST">
+            <label for="work_id">Select a user to delete:</label>
+            <select name="work_id" id="work_id">
+                {% for user in users %}
+                <option value="{{ user[0] }}">{{ user[1] }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Delete</button>
+        </form>
+    </div>
 </body>
+
 </html>
