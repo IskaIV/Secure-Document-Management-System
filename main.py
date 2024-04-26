@@ -1,10 +1,18 @@
 import sqlite3
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, url_for, flash, send_file
+from werkzeug.utils import secure_filename
 import hashlib
 import logging
 from setup import start_db
 from check import generate_token, check_token
+import io
+
+UPLOAD_FOLDER = '/home/poisoniv/Code/COP4521/Project1/files'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 logging.basicConfig(level=logging.DEBUG)
 user = ['']
@@ -39,7 +47,6 @@ def login():
             user[0] = rows[0][0]
 
             # Check Users table for the role of the user and assign it to the role
-
 
             # Redirect to the appropriate page based on the role
             response = make_response(redirect("/AdminMainPage"))
@@ -130,25 +137,59 @@ def main():
     return render_template('AdminMainPage.html', Users=users, Files=files)
 
 
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/uploadfile', methods=['POST', 'GET'])
-def addfile():
-    session_token = request.cookies.get('AuthToken')
-
-    if not check_token(session_token, user[0]):
-        return render_template('TokenError.html')
-
+def uploadfile():
     if request.method == 'POST':
-        conn = sqlite3.connect('database.db')
-        cur = conn.cursor()
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+
         file = request.files['file']
-        filename = file.filename
-        filedata = file.read()
-        cur.execute(
-            "INSERT INTO Files (FileName, FileData) VALUES (?, ?)", (filename, filedata))
-        conn.commit()
-        conn.close()
-        return redirect('/main')
+
+        # If the user does not select a file, the browser submits an empty file without a filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            # Read the file content
+            file_data = file.read()
+            # Insert file data into the database
+            conn = sqlite3.connect('database.db')
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO Files (FileName, FileData, WorkID) VALUES (?, ?, ?)", (filename, file_data, user[0]))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('uploadfile'))
     return render_template('UploadFile.html')
+
+
+@app.route('/download/<int:file_id>')
+def downloadfile(file_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT FileName, FileData FROM Files WHERE FileId=?", (file_id,))
+    file_record = cursor.fetchone()
+    conn.close()
+
+    if file_record:
+        filename, file_data = file_record
+        return send_file(io.BytesIO(file_data), attachment_filename=filename, as_attachment=True)
+    else:
+        return "File not found"
+
+
+@app.route('/EditWorkID', methods=['POST', 'GET'])
+def EditWorkID():
+    return render_template('EditWorkID.html')
 
 
 if __name__ == "__main__":

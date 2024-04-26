@@ -43,8 +43,8 @@ def start_db():
         CREATE TABLE IF NOT EXISTS Files (
             FileId INTEGER PRIMARY KEY AUTOINCREMENT,
             FileName TEXT,
-            FileTarLink TEXT,
-            FileData BLOB
+            FileData BLOB,
+            WorkID TEXT
         )
     ''')
 
