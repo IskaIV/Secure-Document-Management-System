@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=devicewidth, initial-scale=1.0" />
         <title>Main Page</title>
-        <link rel="stylesheet" href="/static/MainPagestyle.css">
+        <link rel="stylesheet" href="/static/ManagerMainPagestyle.css">
     </head>
 
     <body>
@@ -29,10 +29,10 @@
 
                     <div class="UserName">
                         <h1>Welcome, {{ WorkID }}</h1>
-
+                        <a href="/download"><button class="download-btn" type="button">Download Files</button></a>
                         <a href="/addfile"><button class="add-btn" type="button">Upload A File</button></a>
                         <a href="/detelefile"><button class="remove-btn" type="button">Delete A File</button></a>
-                        <a href="/"><button class="msg-btn" type="button">Sign Out</button></a>
+                        <a href="/"><button class="signout-btn" type="button">Sign Out</button></a>
 
                     </div>
 
