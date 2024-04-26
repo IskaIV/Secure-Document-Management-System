@@ -253,7 +253,38 @@ def fetch_work_ids():
 
 @app.route('/DeleteUser', methods=['POST', 'GET'])
 def DeleteUser():
-    return render_template('DeleteUser.html')
+    if request.method == 'POST':
+        work_id = request.form.get('work_id')
+        delete_user(work_id)
+        return redirect(url_for('main'))  # Redirect to the main page after deletion
+
+    # Fetch all user names from the Users table
+    users = fetch_user_names()
+
+    return render_template('DeleteUser.html', users=users)
+
+def fetch_user_names():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Fetch all user names from the Users table
+    cursor.execute("SELECT WORKID, First, Last FROM Users")
+    users = cursor.fetchall()
+
+    conn.close()
+
+    return users
+
+def delete_user(work_id):
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+
+    # Delete the user from the Users table
+    cursor.execute("DELETE FROM Users WHERE WORKID=?", (work_id,))
+    conn.commit()
+
+    conn.close()
+
 
 
 if __name__ == "__main__":
