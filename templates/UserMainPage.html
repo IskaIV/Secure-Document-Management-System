@@ -35,19 +35,6 @@
 
                 <div class="corners">
                     <div class="feed">
-                        {% for file in Files %}
-                        <div class="post__content">
-                            <div class="post__top">
-                                <h1> {{ file[1] }}</h1>
-                            </div>
-                            <article class="post">
-                                <h2>{{ file[2] }}</a></h2>
-                                <h3>{{ file[3] }}</h3>
-                                <a href="{{ url_for('post_detail', post_id=post[0]) }}"><button class="seemore-btn">See
-                                        More</button> </a>
-                            </article>
-                        </div>
-                        {% endfor %}
 
                     </div>
                 </div>
